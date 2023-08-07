@@ -1,0 +1,17 @@
+# Create User
+$password = '${tf_password}' | ConvertTo-SecureString -AsPlainText -Force
+$params = @{
+    Name = '${username}'
+    Password = $password
+    FullName = "BCE Demo User"
+    Description = "Local user account for BCE Demo"
+}
+New-LocalUser @params
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member ${username}
+
+# Download Chrome
+$Path = $env:TEMP
+$Installer = 'chrome_installer.exe'
+Invoke-WebRequest -Uri 'http://dl.google.com/chrome/install/chrome_installer.exe' -OutFile $Path\$Installer
+Start-Process -FilePath $Path\$Installer -Args '/silent /install' -Verb RunAs -Wait
+Remove-Item -Path $Path\$Installer
